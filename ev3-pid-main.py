@@ -1,3 +1,4 @@
+#!/usr/bin/env pybricks-micropython
 from pybricks import ev3brick as brick
 from pybricks.ev3devices import Motor, TouchSensor, ColorSensor
 from pybricks.parameters import Port, Button, Color, ImageFile, SoundFile
@@ -14,14 +15,14 @@ max_speed = 1000
 
 #setup
 sensor = ColorSensor(Port.S2)
-left_motor = Motor(Port.C)
-right_motor = Motor(Port.B)
-robot = DriveBase(left_motor, right_motor, 100, 147)
+left_motor = Motor(Port.B)
+right_motor = Motor(Port.D)
+robot = DriveBase(left_motor, right_motor, 54, 100)
 brick.sound.beep()
 
 class K_val:
     def __init__(self):  
-        self.Kp = 4
+        self.Kp = 1.5
         self.Ki = 0
         self.Kd = 0
 
@@ -49,20 +50,16 @@ def iCor_cal(Ki):
     global integral, error
     integral = integral + error
     iCor = Ki * integral
+    return iCor
 def dCor_cal(Kd):
     global last_error, derivative
     derivative = error - last_error
     dCor = Kd * derivative
     last_error = error
+    return dCor
     
 #loop start
 while True: 
-#break the program using touch sensor
-#program begin here
-
-#program end here
-
     cor_val = Pid_cal()
-    print(cor_val)
-    robot.drive(max_speed/4, cor_val)
+    robot.drive(1000, cor_val)
 #end loop  
