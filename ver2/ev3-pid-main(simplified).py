@@ -41,10 +41,10 @@ def Pid_cal(Kp, Ki, Kd):
 #loop start
 while True: 
     cor_val = Pid_cal(0.98, 0.00001, 3)
-    if cor_val > 120:
-        cor_val = 120
-    elif cor_val < -120:
-        cor_val = -120
+    if cor_val > 100:
+        cor_val = 100
+    elif cor_val < -100:
+        cor_val = -100
 
     robot.drive(max_speed, cor_val)
 #end loop
