@@ -17,24 +17,31 @@ max_speed = 1000
 sensor = ColorSensor(Port.S2)
 left_motor = Motor(Port.D)
 right_motor = Motor(Port.B)
-robot = DriveBase(left_motor, right_motor, 54, 100)
+robot = DriveBase(left_motor, right_motor, 57, 115)
 brick.sound.beep()
 
-def Pid_cal(Ki, Kp, Kd):
+def Pid_cal(Kp, Ki, Kd):
     global target, error, integral, derivative, last_error
     currentVal = sensor.reflection()
+    print(currentVal)
     error = target - currentVal
     pCor = Kp * error
     integral = integral + error
     iCor = Ki * integral
     derivative = error - last_error
     dCor = Kd * derivative
-    last_error = error
     correction = pCor + iCor + dCor
+    print(pCor, iCor, dCor)
+    last_error = error
     return correction
 
 #loop start
 while True: 
-    cor_val = Pid_cal(1.2, 0, 0)
+    cor_val = Pid_cal(0.98, 0.00001, 3)
+    if cor_val > 120:
+        cor_val = 120
+    elif cor_val < -120:
+        cor_val = -120
+
     robot.drive(max_speed, cor_val)
 #end loop
