@@ -5,12 +5,12 @@ from pybricks.parameters import Port, Button, Color, ImageFile, SoundFile
 from pybricks.tools import wait
 from pybricks.robotics import DriveBase
 
-#global variable
-target = 33
-error = 0
-integral = 0
-derivative = 0
-last_error = 0
+#devining variable
+target = 33.0
+error = 0.0
+integral = 0.0
+derivative = 0.0
+last_error = 0.0
 max_speed = 1000
 delta_t = 0.004
 
