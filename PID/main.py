@@ -1,49 +1,60 @@
-#!/usr/bin/env pybricks-micropython
-import PID
-from pybricks import ev3brick as brick
-from pybricks.ev3devices import Motor, TouchSensor, ColorSensor
-from pybricks.parameters import Port, Button, Color, ImageFile, SoundFile
-from pybricks.tools import wait
-from pybricks.robotics import DriveBase
-from time import sleep
-
+#!/usr/bin/python
 import time
 
-#setup
-sensor = ColorSensor(Port.S2)
-left_motor = Motor(Port.D)
-right_motor = Motor(Port.B)
-robot = DriveBase(left_motor, right_motor, 100, 150)
-brick.sound.beep()
+class PID:
+    def __init__(self, P=0, I=0.0, D=0.0, SetPoint = 0.0, current_time=None):
 
-#switcher
-class PIDSwitcher(object):
-    def indirect(self,i , counter):
-        method_name='number_'+str(i)
-        method=getattr(self,method_name,lambda :'Invalid')
-        start = time.time()
-        return method(c, counter)
-    def number_0(self, counter, start):                     #turn right
-        test_pid(1.5, 0.5, 0.1, 80.0, start, counter)
-    def number_1(self, counter, start):                     #turn left
-        test_pid(0.0, 0.0, 0.0, 100.0, start, counter)
-    def number_2(self, counter, start):                     #go straight
-        test_pid(0.0, 0.0, 0.0, 100.0, start, counter)
+        self.Kp = P
+        self.Ki = I
+        self.Kd = D
 
-#pid
-def test_pid(P = 0.0,  I = 0.0, D= 0.0, L=100, T = 0.0, counter = 0.0 ):
-    pid = PID.PID(P, I, D, L)
-    pid.setSampleTime(0.01)
-        
-    while time.time() - T < counter:
-        feedback = sensor.reflection()
-        print(feedback)
-        pid.update(feedback)
-        output = pid.output
-        print(output)
-        robot.drive(1000, output)
-        sleep(0.01)
+        self.sample_time = 0.00
+        self.current_time = current_time if current_time is not None else time.time()
+        self.last_time = self.current_time
 
-if __name__ == "__main__":
-    s = PIDSwitcher()
-    s.indirect(0, 10)
+        self.SetPoint = SetPoint
+
+        self.clear()
+    
+    def clear(self):
+        """Clears PID computations and coefficients"""
+
+        self.PTerm = 0.0
+        self.ITerm = 0.0
+        self.DTerm = 0.0
+        self.last_error = 0.0
+
+        # Windup Guard
+        self.int_error = 0.0
+        self.windup_guard = 22
+
+        self.output = 0.0
+
+    def update(self, feedback_value, current_time=None):
+        error = self.SetPoint - (100 * ( feedback_value - 4 ) / ( 44 - 4 ))
+
+        self.current_time = current_time if current_time is not None else time.time()
+        delta_time = self.current_time - self.last_time
+        delta_error = error - self.last_error
+
+        if (delta_time >= self.sample_time):
+            self.PTerm = self.Kp * error
+            self.ITerm += error * delta_time
+
+            if (self.ITerm < -self.windup_guard):
+                self.ITerm = -self.windup_guard
+            elif (self.ITerm > self.windup_guard):
+                self.ITerm = self.windup_guard
+
+            self.DTerm = 0.0
+            if delta_time > 0:
+                self.DTerm = delta_error / delta_time
+
+            # Remember last time and last error for next calculation
+            self.last_time = self.current_time
+            self.last_error = error
+
+            self.output = self.PTerm + (self.Ki * self.ITerm) + (self.Kd * self.DTerm)
+
+    def setSampleTime(self, sample_time):
+        self.sample_time = sample_time
