@@ -11,7 +11,7 @@ class PID:
         self.sample_time = 0.00
         self.current_time = current_time if current_time is not None else time.time()
         self.last_time = self.current_time
-
+    
         self.SetPoint = SetPoint
 
         self.clear()
@@ -26,12 +26,12 @@ class PID:
 
         # Windup Guard
         self.int_error = 0.0
-        self.windup_guard = 20.0
+        self.windup_guard = 22
 
         self.output = 0.0
 
     def update(self, feedback_value, current_time=None):
-        error = self.SetPoint - (100 * ( feedback_value - 4 ) / ( 47 - 4 ))
+        error = self.SetPoint - (100 * ( feedback_value - 4 ) / ( 44 - 4 ))
 
         self.current_time = current_time if current_time is not None else time.time()
         delta_time = self.current_time - self.last_time
