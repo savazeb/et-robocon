@@ -38,6 +38,7 @@ void PID::clear(){
 }
 
 double PID::update(double feedback_value , double current_time){
+    /*Calculate error with calibration*/
     error = SetPoint - (100 * (feedback_value - 4) / (44 - 4));
     
     time_t ct;
