@@ -1,7 +1,6 @@
 #include <ctime>
-#include <iostream>
 
-using namespace std;
+#include "PID.h"
 
 void PID::init(double P, double I, double D, double SP){
     
@@ -72,16 +71,4 @@ double PID::update(double feedback_value , double current_time){
 
 void PID::setSampleTime(double st){
     SampleTime = st;
-}
-
-
-int main()
-{
-    time_t ct;
-    double current = ct;
-    cout << current << endl;
-    double test = 1.00;
-    double test1 = 2;
-    if (test > -test1)
-        cout << test << endl;  return 0;
 }
