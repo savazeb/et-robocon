@@ -1,0 +1,6 @@
+{
+	"files.eol": "\n",
+	"debug.openDebug": "neverOpen",
+	"python.linting.enabled": false,
+	"python.languageServer": "None"
+}
