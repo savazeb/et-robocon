@@ -1,3 +1,3 @@
-<img src="Images/banner.png">
+<img src="banner.png">
 
 # ETROBO <h1>
