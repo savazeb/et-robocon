@@ -80,6 +80,5 @@ void main_task(intptr_t unused) {
 
 void sub_task(intptr_t unused)
 {
-    for(;;) timestamp++;
     
 }

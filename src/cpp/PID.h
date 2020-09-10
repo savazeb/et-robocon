@@ -1,14 +1,13 @@
-#ifndef PID_H
-#define PID_H
-
+#pragma once
 class PID{
     
-    private:
-    void init(double , double , double , double , double);
+    public:
+    PID(double, double, double, double, double);
+    double update(double, double);
     void clear();
-    double update(double  , double);
     void setSampleTime(double);
     
+    private:
     double Kp;
     double Ki;
     double Kd;
@@ -29,4 +28,5 @@ class PID{
     
 };
 
-#endif
+#include "PID.cpp"
+#include <ctime>
