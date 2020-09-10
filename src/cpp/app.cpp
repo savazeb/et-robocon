@@ -54,7 +54,7 @@ void main_task(intptr_t unused) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
 
-    PID pid = PID(1.4, 5, 0, 55);
+    PID pid = PID(1.4, 5, 0, 55, 0.0);
     pid.setSampleTime(0.1);
 
     /*write code here*/
@@ -62,7 +62,7 @@ void main_task(intptr_t unused) {
     { 
         /*PID control*/
         ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
-        feed = (int)pid.update(ref);
+        feed = (int)pid.update(ref, 0.04);
         ev3_motor_steer(
             left_motor,
             right_motor,

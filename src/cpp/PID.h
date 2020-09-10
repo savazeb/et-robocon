@@ -4,10 +4,10 @@
 class PID{
     
     private:
-    void init(double P, double I, double D, double SetPoint);
+    void init(double , double , double , double , double);
     void clear();
-    double update(double feedback_value , double current_time);
-    void setSampleTime(double st);
+    double update(double  , double);
+    void setSampleTime(double);
     
     double Kp;
     double Ki;

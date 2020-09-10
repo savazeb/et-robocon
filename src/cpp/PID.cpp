@@ -2,15 +2,13 @@
 
 #include "PID.h"
 
-void PID::init(double P, double I, double D, double SP){
+void PID::init(double P, double I, double D, double SP, double ct){
     
     Kp = P;
     Ki = I;
     Kd = D;
     
     SampleTime = 0.00;
-    
-    time_t ct;
     
     current_time = ct;
     last_time = current_time;
@@ -37,7 +35,7 @@ void PID::clear(){
     
 }
 
-double PID::update(double feedback_value , double current_time){
+double PID::update(double feedback_value , double ct){
     /*Calculate error with calibration*/
     error = SetPoint - (100 * (feedback_value - 4) / (44 - 4));
     
