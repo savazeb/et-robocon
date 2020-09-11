@@ -1,6 +1,9 @@
-# <div align="center">ETROBO 2020<h1>
+# <div align="center">[ETロボコン](https://github.com/ETrobocon/etrobo/wiki)
 
 <img src="banner.png">
 
-## <div align="left">reference<h5>
-https://github.com/ETrobocon/etrobo/wiki
+## Goals
+- Finish the line following task within 25-30 seconds using PID controller
+- Complete 2nd task as fast as possible
+- Find the box
+- Park the car
