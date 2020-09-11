@@ -1,4 +1,4 @@
-# <div align="center">[ETロボコン](https://github.com/ETrobocon/etrobo/wiki)
+# <div align="center">[ETロボコン](https://github.com/ETrobocon/etrobo)
 
 <img src="banner.png">
 
