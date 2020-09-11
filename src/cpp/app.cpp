@@ -42,8 +42,6 @@ double timestamp;
 
 /*main task*/
 void main_task(intptr_t unused) {
-    act_tsk(SUB_TASK);
-    tslp_tsk(1000);
 
     ev3_sensor_config(color_sensor, COLOR_SENSOR);
     ev3_color_sensor_get_reflect(color_sensor); /* 反射率モード */
@@ -54,15 +52,15 @@ void main_task(intptr_t unused) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
 
-    PID pid = PID(1.4, 5, 0, 55, 0.0);
-    pid.setSampleTime(0.1);
+    PID pid = PID(1.5, 5.0, 0.001, 55, 0.0);
+    pid.setSampleTime(0.0);
 
     /*write code here*/
     while(1)
     { 
         /*PID control*/
         ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
-        feed = (int)pid.update(ref, 0.04);
+        feed = (int)pid.update(ref, 0.4);
         ev3_motor_steer(
             left_motor,
             right_motor,
@@ -76,9 +74,4 @@ void main_task(intptr_t unused) {
     ev3_motor_stop(left_motor, false);
     ev3_motor_stop(right_motor, false);
     ext_tsk();
-}
-
-void sub_task(intptr_t unused)
-{
-    
 }

@@ -1,4 +1,4 @@
-#include <ctime>
+#include <time.h>
 
 #include "PID.h"
 
@@ -9,7 +9,7 @@ PID::PID(double P, double I, double D, double SP, double ct){
     Kd = D;
     
     SampleTime = 0.00;
-    
+
     current_time = ct;
     last_time = current_time;
     
@@ -35,9 +35,9 @@ void PID::clear(){
     
 }
 
-double PID::update(double feedback_value , double ct){
+double PID::update(double feedback_value, double ct){
     /*Calculate error with calibration*/
-    error = SetPoint - (100 * (feedback_value - 4) / (44 - 4));
+    error = SetPoint - (100 * (feedback_value - 2) / (33 - 2));
     
     current_time = ct;
     delta_time =  current_time - last_time;
@@ -57,8 +57,9 @@ double PID::update(double feedback_value , double ct){
             DTerm = delta_error / delta_time;
         
         /*Remember last time and last error for next calculation*/
-        if(ct == delta_Time) last_time = 0.0;
+        if(current_time = delta_time) last_time = 0.0;
         else last_time = current_time;
+        
 
         last_error = error;
         
