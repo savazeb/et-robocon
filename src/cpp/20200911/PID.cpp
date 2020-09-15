@@ -61,22 +61,26 @@ double PID::update(double feedback_value){
     
     delta_error = error - last_error;
     
-    PTerm = Kp * error;
-    ITerm += error;
-        
-    if(ITerm < -windup_guard)
-        ITerm = -windup_guard;
-    else if(ITerm > windup_guard)
-        ITerm = windup_guard;
-        
-    DTerm = 0.00;
-    if(delta_time > 0)
-        DTerm = delta_error;
+	/*PID calculation*/
+	if(error > LEVEL || error < -LEVEL)
+	{
+		PTerm = Kp * error;
+		ITerm += error;
+			
+		if(ITerm < -windup_guard)
+			ITerm = -windup_guard;
+		else if(ITerm > windup_guard)
+			ITerm = windup_guard;
+			
+		DTerm = 0.00;
+		if(delta_time > 0)
+			DTerm = delta_error;
 
-    last_error = error;
+		last_error = error;
         
-    output = PTerm + (Ki * ITerm) + (Kd * DTerm);
-        
+		output = PTerm + (Ki * ITerm) + (Kd * DTerm);
+    }
+	else return 0;
     
     return output;
 }
@@ -91,28 +95,32 @@ double PID::update(double feedback_value, double ct){
     current_time = ct;
     delta_time =  current_time - last_time;
     delta_error = error - last_error;
-    
-    if (delta_time >= SampleTime){
-        PTerm = Kp * error;
-        ITerm += error * delta_time;
-        
-        if(ITerm < -windup_guard)
-            ITerm = -windup_guard;
-        else if(ITerm > windup_guard)
-            ITerm = windup_guard;
-        
-        DTerm = 0.00;
-        if(delta_time > 0)
-            DTerm = delta_error / delta_time;
-        
-        /*Remember last time and last error for next calculation*/
-		last_time = current_time;
-       
-        last_error = error;
-        
-        output = PTerm + (Ki * ITerm) + (Kd * DTerm);
-        
+	
+    /*PID calculation*/
+	if(error > LEVEL || error < -LEVEL)
+	{
+		if (delta_time >= SampleTime){
+			PTerm = Kp * error;
+			ITerm += error * delta_time;
+			
+			if(ITerm < -windup_guard)
+				ITerm = -windup_guard;
+			else if(ITerm > windup_guard)
+				ITerm = windup_guard;
+			
+			DTerm = 0.00;
+			if(delta_time > 0)
+				DTerm = delta_error / delta_time;
+			
+			/*Remember last time and last error for next calculation*/
+			last_time = current_time;
+		   
+			last_error = error;
+			
+			output = PTerm + (Ki * ITerm) + (Kd * DTerm);
+		}
     }
+	else return 0;
     
     return output;
 }
@@ -121,7 +129,7 @@ void PID::setSampleTime(double st){
     SampleTime = st;
 }
 
-void setRefMinMax(double min, double max){
+void PID::setRefMinMax(double min, double max){
 	minREF = min;
 	maxREF = max;
 }
