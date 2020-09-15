@@ -21,8 +21,6 @@ class PID{
     double Kp;
     double Ki;
     double Kd;
-	double maxREF;
-	double minREF;
     double current_time;
     double SampleTime;
     double last_time;
@@ -36,7 +34,8 @@ class PID{
     double delta_time;
     double delta_error;
     double last_error;
-    
+    double minREF;
+    double maxREF;
 };
 
 #include "PID.cpp"

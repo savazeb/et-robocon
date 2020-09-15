@@ -83,6 +83,7 @@ extern "C" {
 
 //extern void	task(intptr_t exinf);
 extern void	main_task(intptr_t exinf);
+extern void sub_task(intptr_t exinf);
 //extern void	tex_routine(TEXPTN texptn, intptr_t exinf);
 //#ifdef CPUEXC1
 //extern void	cpuexc_handler(void *p_excinf);

@@ -47,17 +47,16 @@ double PID::update(double feedback_value, double ct){
         PTerm = Kp * error;
         ITerm += error * delta_time;
         
-        if(ITerm < -windup_guard)
-            ITerm = -windup_guard;
-        else if(ITerm > windup_guard)
-            ITerm = windup_guard;
+        if(ITerm < -windup_guard) ITerm = -windup_guard;
+        else if(ITerm > windup_guard) ITerm = windup_guard;
         
         DTerm = 0.00;
         if(delta_time > 0)
             DTerm = delta_error / delta_time;
         
         /*Remember last time and last error for next calculation*/
-        if(current_time = delta_time) last_time = 0.0;
+        if(current_time == delta_time) 
+            last_time = 0.0;
         else last_time = current_time;
         
 

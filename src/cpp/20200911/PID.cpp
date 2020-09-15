@@ -45,7 +45,6 @@ void PID::clear(){
     last_error = 0.00;
     
     /*Windup Guard*/
-    int_error = 0.00;
     windup_guard = GUARD;
     
     output = 0.00;
@@ -121,7 +120,7 @@ void PID::setSampleTime(double st){
     SampleTime = st;
 }
 
-void setRefMinMax(double min, double max){
+void PID::setRefMinMax(double min, double max){
 	minREF = min;
-	maxREF = max;
+    maxREF = max;
 }
