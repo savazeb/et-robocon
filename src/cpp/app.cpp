@@ -62,7 +62,7 @@ void main_task(intptr_t unused) {
     ev3_motor_reset_counts(right_motor);
 
     PID pid = PID(kp, ki, kd, SP);
-    pid.setSampleTime(0.0);
+    pid.setRefMinMax(2,33);
 
     act_tsk(SUB_TASK);
     tslp_tsk(1000);
@@ -72,7 +72,7 @@ void main_task(intptr_t unused) {
     { 
         /*PID control*/
         ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
-        feed = (int)pid.update(ref, 0.2);
+        feed = (int)pid.update(ref);
         if (feed >= MAX_MIN) feed = MAX_MIN;
         else if (feed <= -MAX_MIN) feed = -MAX_MIN;
         ev3_motor_steer(
