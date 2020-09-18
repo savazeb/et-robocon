@@ -58,28 +58,26 @@ double PID::update(double feedback_value){
     else
 		error = SetPoint - feedback_value;
     
-    delta_error = error - last_error;
-    
-	/*PID calculation*/
-	if(error > LEVEL || error < -LEVEL)
-	{
-		PTerm = Kp * error;
-		ITerm += error;
-			
-		if(ITerm < -windup_guard)
-			ITerm = -windup_guard;
-		else if(ITerm > windup_guard)
-			ITerm = windup_guard;
-			
-		DTerm = 0.00;
-		if(delta_time > 0)
-			DTerm = delta_error;
-
-		last_error = error;
+    /*calculate PID*/
+    if (error > 20|| error < -20){
+        delta_error = error - last_error;
         
-		output = PTerm + (Ki * ITerm) + (Kd * DTerm);
-    }
-	else return 0;
+        PTerm = Kp * error;
+        ITerm += error;
+            
+        if(ITerm < -windup_guard)
+            ITerm = -windup_guard;
+        else if(ITerm > windup_guard)
+            ITerm = windup_guard;
+       
+        DTerm = 0.00;
+        DTerm = delta_error;
+
+        last_error = error;
+            
+        output = PTerm + (Ki * ITerm) + (Kd * DTerm);
+    }    
+    else return 0;
     
     return output;
 }
@@ -94,33 +92,31 @@ double PID::update(double feedback_value, double ct){
     current_time = ct;
     delta_time =  current_time - last_time;
     delta_error = error - last_error;
-	
-    /*PID calculation*/
-	if(error > LEVEL || error < -LEVEL)
-	{
-		if (delta_time >= SampleTime){
-			PTerm = Kp * error;
-			ITerm += error * delta_time;
-			
-			if(ITerm < -windup_guard)
-				ITerm = -windup_guard;
-			else if(ITerm > windup_guard)
-				ITerm = windup_guard;
-			
-			DTerm = 0.00;
-			if(delta_time > 0)
-				DTerm = delta_error / delta_time;
-			
-			/*Remember last time and last error for next calculation*/
-			last_time = current_time;
-		   
-			last_error = error;
-			
-			output = PTerm + (Ki * ITerm) + (Kd * DTerm);
-		}
+    if (error > 9|| error < -9){
+        if (delta_time >= SampleTime){
+            PTerm = Kp * error;
+            ITerm += error * delta_time;
+            
+            if(ITerm < -windup_guard)
+                ITerm = -windup_guard;
+            else if(ITerm > windup_guard)
+                ITerm = windup_guard;
+            
+            DTerm = 0.00;
+            if(delta_time > 0)
+                DTerm = delta_error / delta_time;
+            
+            /*Remember last time and last error for next calculation*/
+            last_time = current_time;
+        
+            last_error = error;
+            
+            output = PTerm + (Ki * ITerm) + (Kd * DTerm);
+            
+        }
     }
-	else return 0;
-    
+    else return 0;
+
     return output;
 }
 

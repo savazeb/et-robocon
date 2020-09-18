@@ -1,12 +1,11 @@
 #ifndef PID_H
 #define PID_H
 
-/*macro declaration*/
-#define MAX_VAL 100 // calibration purpose
-#define GUARD 22 // satruation fix
-#define LEVEL 7 // error level
+//macro declaration
+#define MAX_VAL 100
+#define GUARD 22
 
-/*class declaration*/
+//class declaration
 class PID{
     
     public:

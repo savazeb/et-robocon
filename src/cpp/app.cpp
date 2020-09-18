@@ -27,14 +27,24 @@
 
 #define SP 55
 
-#define kpc 1.88
-#define tc 4.97
+#define kpc 1.275
+#define tc 2.49
+
+// method parameter configuration
 
 #define kp 0.6 * kpc
 #define ki kp/(0.5 * tc)
 #define kd kp * 0.125 * tc
 
-#define POWER 100
+
+//manual parameter configuration
+/*
+#define kp 1
+#define ki 0
+#define kd 0
+*/
+
+#define POWER 75
 #define MAX_MIN 100
 /*configure sensor and motor*/
 static const sensor_port_t
@@ -61,8 +71,8 @@ void main_task(intptr_t unused) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
 
-    PID pid = PID(kp, ki, kd, SP);
-    pid.setRefMinMax(2,33);
+    PID pid = PID(kp, ki, kd, SP, 0.00);
+    pid.setRefMinMax(2, 33);
 
     act_tsk(SUB_TASK);
     tslp_tsk(1000);
@@ -71,10 +81,9 @@ void main_task(intptr_t unused) {
     while(1)
     { 
         /*PID control*/
+        timestamp = getTime() / 100000;
         ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
-        feed = (int)pid.update(ref);
-        if (feed >= MAX_MIN) feed = MAX_MIN;
-        else if (feed <= -MAX_MIN) feed = -MAX_MIN;
+        feed = (int)pid.update(ref, timestamp);
         ev3_motor_steer(
             left_motor,
             right_motor,
@@ -93,5 +102,25 @@ void main_task(intptr_t unused) {
 
 void sub_task(intptr_t unused)
 {
+    while(1){
+    syslog(LOG_NOTICE, "%f", timestamp);
+    tslp_tsk(100*1000);
+    }
+}
 
+SYSTIM getTime()
+{
+    static SYSTIM start = -1;
+    SYSTIM time;
+    SYSTIM now;
+    
+    get_tim(&time);
+    
+    if(start < 0){
+        start = time;
+    }
+    now = time - start - 5000000;
+    if ((int)now <= 0)
+        return 0;
+    return now;
 }
