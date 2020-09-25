@@ -47,7 +47,10 @@
 #define MAX_MIN 100
 /*configure sensor and motor*/
 static const sensor_port_t
-    color_sensor    = EV3_PORT_2;
+    touch_sensor    = EV3_PORT_1,
+    color_sensor    = EV3_PORT_2,
+    sonar_sensor    = EV3_PORT_3,
+    gyro_sensor     = EV3_PORT_4;
 
 static const motor_port_t
     left_motor      = EV3_PORT_C,
@@ -56,14 +59,18 @@ static const motor_port_t
 /*declare global variable*/
 double ref;
 int feed;
-double timestamp;
-int checkdigit;
+int timestamp;
+double current_time;
+double start_time;
+double delta_time;
 int ctr;
 /*main task*/
 void main_task(intptr_t unused) {
 
+    ev3_sensor_config(sonar_sensor, ULTRASONIC_SENSOR);
     ev3_sensor_config(color_sensor, COLOR_SENSOR);
     ev3_color_sensor_get_reflect(color_sensor); /* 反射率モード */
+    ev3_sensor_config(touch_sensor, TOUCH_SENSOR);
 
     ev3_motor_config(left_motor, LARGE_MOTOR);
     ev3_motor_config(right_motor, LARGE_MOTOR);
@@ -77,22 +84,38 @@ void main_task(intptr_t unused) {
     act_tsk(SUB_TASK);
     tslp_tsk(1000);
 
+    
+    while(1)
+    {
+        //tail_control(TAIL_ANGLE_STAND_UP); /* 完全停止用角度に制御 */
+
+        if (ev3_touch_sensor_is_pressed(touch_sensor) == 1)
+        {
+            break; /* タッチセンサが押された */
+        }
+
+        tslp_tsk(10 * 1000U); /* 10msecウェイト */
+    }
+
+    timestamp = getTime();
+    current_time = (double)timestamp / 100000;
+    start_time = current_time;
+
     /*write code here*/
     while(1)
     { 
         /*PID control*/
-        timestamp = (double)getTime() / 100000;
-        
+        timestamp = getTime();
+        current_time = (double)timestamp / 100000;
+        delta_time = current_time - start_time;
         ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
-        feed = (int)pid.update(ref, timestamp);
-            ev3_motor_steer(
-            left_motor,
-            right_motor,
-            POWER,
-            feed
-            );
- 
-        
+        feed = (int)pid.update(ref, current_time);
+        ev3_motor_steer(
+        left_motor,
+        right_motor,
+        POWER,
+        feed
+        );
         /*smoothig motor movement*/
         tslp_tsk(4 * 1000U); /* 4msec周期起動 */
         
@@ -106,7 +129,8 @@ void main_task(intptr_t unused) {
 void sub_task(intptr_t unused)
 {
     while(1){
-    syslog(LOG_NOTICE, "%d", (int)timestamp);
+    if(current_time != 0.00)
+    syslog(LOG_NOTICE, "%d %d %d", (int)current_time, (int)start_time, (int)delta_time);
     tslp_tsk(100*1000);
     }
 }
@@ -122,8 +146,6 @@ SYSTIM getTime()
     if(start < 0){
         start = time;
     }
-    now = time - start - 5000000;
-    if ((int)now <= 0)
-        return 0;
+    now = time - start;
     return now;
 }

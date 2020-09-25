@@ -122,7 +122,7 @@ double PID::update(double feedback_value, double ct){
         //syslog(LOG_NOTICE, "%d", cnt);
         tslp_tsk(2000);
         if(cnt > 5) {ITerm = 0.00; cnt = 0; return 0;}
-        return 0;
+        return error;
     }
 
     return output;

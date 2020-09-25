@@ -3,7 +3,7 @@
 
 //macro declaration
 #define MAX_VAL 100
-#define GUARD 23
+#define GUARD 22
 #define LEVEL 20
 
 //class declaration
