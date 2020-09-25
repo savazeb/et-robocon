@@ -3,8 +3,7 @@
 
 //macro declaration
 #define MAX_VAL 100
-#define GUARD 23
-#define LEVEL 20
+#define GUARD 22
 
 //class declaration
 class PID{
@@ -37,7 +36,6 @@ class PID{
     double last_error;
     double minREF;
     double maxREF;
-    size_t cnt;
 };
 
 #include "PID.cpp"

@@ -12,7 +12,7 @@ PID::PID(double P, double I, double D, double SP){
     
 	maxREF = 0.00;
 	minREF = 0.00;
-
+	
     clear();
 }
 
@@ -47,8 +47,6 @@ void PID::clear(){
     /*Windup Guard*/
     windup_guard = GUARD;
     
-    cnt = 0;
-
     output = 0.00;
     
 }
@@ -61,7 +59,7 @@ double PID::update(double feedback_value){
 		error = SetPoint - feedback_value;
     
     /*calculate PID*/
-    if (error > LEVEL|| error < -LEVEL){
+    if (error > 20|| error < -20){
         delta_error = error - last_error;
         
         PTerm = Kp * error;
@@ -79,7 +77,7 @@ double PID::update(double feedback_value){
             
         output = PTerm + (Ki * ITerm) + (Kd * DTerm);
     }    
-    else{ ITerm = 0.00; return 0;}
+    else return 0;
     
     return output;
 }
@@ -94,7 +92,7 @@ double PID::update(double feedback_value, double ct){
     current_time = ct;
     delta_time =  current_time - last_time;
     delta_error = error - last_error;
-    if (error > LEVEL|| error < -LEVEL){
+    if (error > 9|| error < -9){
         if (delta_time >= SampleTime){
             PTerm = Kp * error;
             ITerm += error * delta_time;
@@ -117,13 +115,7 @@ double PID::update(double feedback_value, double ct){
             
         }
     }
-    else{
-        cnt++;
-        //syslog(LOG_NOTICE, "%d", cnt);
-        tslp_tsk(2000);
-        if(cnt > 5) {ITerm = 0.00; cnt = 0; return 0;}
-        return 0;
-    }
+    else return 0;
 
     return output;
 }

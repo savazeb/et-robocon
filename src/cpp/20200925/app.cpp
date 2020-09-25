@@ -27,8 +27,9 @@
 
 #define SP 55
 
-#define kpc 1.3
-#define tc 2
+#define kpc 1.275
+#define tc 2.49
+
 // method parameter configuration
 
 #define kp 0.6 * kpc
@@ -57,7 +58,6 @@ static const motor_port_t
 double ref;
 int feed;
 double timestamp;
-int checkdigit;
 int ctr;
 /*main task*/
 void main_task(intptr_t unused) {
@@ -81,18 +81,15 @@ void main_task(intptr_t unused) {
     while(1)
     { 
         /*PID control*/
-        timestamp = (double)getTime() / 100000;
-        
+        timestamp = getTime() / 100000;
         ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
         feed = (int)pid.update(ref, timestamp);
-            ev3_motor_steer(
+        ev3_motor_steer(
             left_motor,
             right_motor,
             POWER,
             feed
-            );
- 
-        
+        );
         /*smoothig motor movement*/
         tslp_tsk(4 * 1000U); /* 4msec周期起動 */
         
@@ -106,7 +103,7 @@ void main_task(intptr_t unused) {
 void sub_task(intptr_t unused)
 {
     while(1){
-    syslog(LOG_NOTICE, "%d", (int)timestamp);
+    syslog(LOG_NOTICE, "%f", timestamp);
     tslp_tsk(100*1000);
     }
 }
