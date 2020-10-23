@@ -26,7 +26,7 @@
 #include "PID.h"
 
 #define SP 55
-/*
+
 #define kpc 1.3
 #define tc 2
 // method parameter configuration
@@ -34,14 +34,16 @@
 #define kp 0.6 * kpc
 #define ki kp/(0.5 * tc)
 #define kd kp * 0.125 * tc
-*/
+
 
 //manual parameter configuration
-
+/*
 #define kp 1
 #define ki 0
 #define kd 0
+*/
 
+#define POWER 75
 #define MAX_MIN 100
 /*configure sensor and motor*/
 static const sensor_port_t
@@ -54,36 +56,6 @@ static const motor_port_t
     left_motor      = EV3_PORT_C,
     right_motor     = EV3_PORT_B;
 
-
-
-
-#define ARR_MEMBER 4
-#define KPC 0
-#define TC 1
-#define POWER 2
-#define TIMELIMIT 3
-
-/* 
-例
-#define ARR_SECTION 3
-double arr[ARR_SECTION][ARR_MEMBER] = {{0.00, 0.00, 100, 5},
-                                        {0.00, 0.00, 100, 15},
-                                         {0.00, 0.00, 100, 20}};
-*/
-
-#define ARR_SECTION 9 //区間数によってかわる
-                                    //KPC, TC, POWER, TIME(s)
-double arr[ARR_SECTION][ARR_MEMBER] = {{1.28, 2, 100, 5.5},
-                                        {1.144, 2.6, 75, 10},
-                                        {1.1, 2.42, 100, 13.0},
-                                        {1.144, 2.35, 70, 21},
-                                        {1.385, 2.45, 80, 22},
-                                        {1.142, 2.42, 100, 28.5},
-                                        {1.6, 2.6, 70, 50.5},
-                                        {1.142, 2.42, 100, 32},
-                                        {1.142, 2.42, 25, 55}
-                                    };
-
 /*declare global variable*/
 double ref;
 int feed;
@@ -91,7 +63,6 @@ int timestamp;
 double current_time;
 double start_time;
 double delta_time;
-double out_time;
 int ctr;
 /*main task*/
 void main_task(intptr_t unused) {
@@ -107,14 +78,13 @@ void main_task(intptr_t unused) {
     ev3_motor_reset_counts(left_motor);
     ev3_motor_reset_counts(right_motor);
 
-    PID pid = PID(SP, 0.00);
+    PID pid = PID(kp, ki, kd, SP, 0.00);
     pid.setRefMinMax(2, 33);
-
-    size_t pos = 0;
 
     act_tsk(SUB_TASK);
     tslp_tsk(1000);
 
+    
     while(1)
     {
         //tail_control(TAIL_ANGLE_STAND_UP); /* 完全停止用角度に制御 */
@@ -128,46 +98,27 @@ void main_task(intptr_t unused) {
     }
 
     timestamp = getTime();
-    current_time = (double)timestamp / 1000000;
+    current_time = (double)timestamp / 100000;
     start_time = current_time;
-    
+
     /*write code here*/
     while(1)
     { 
-        /*get cur time*/
+        /*PID control*/
         timestamp = getTime();
-        tslp_tsk(4 * 1000U);
-        current_time = (double)timestamp / 1000000;
+        current_time = (double)timestamp / 100000;
         delta_time = current_time - start_time;
-        out_time = delta_time * 100;
-
-        if (arr[pos][TIMELIMIT] >= delta_time){
-            /*PID control*/
-            ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
-            pid.parameter(arr[pos][KPC], arr[pos][TC]);
-            feed = (int)pid.update(ref, current_time);
-
-            if(feed > 100){
-                feed = 100;
-            }
-            else if(feed < -100){
-                feed = -100;
-            }
-            
-            if (feed < 15 && feed > -15){
-                feed = 0;
-            }
-            ev3_motor_steer( left_motor, right_motor, (int)arr[pos][POWER], feed );
-            /*smoothig motor movement*/
-            tslp_tsk(4 * 1000U); /* 4msec周期起動 */
-        }
-        else {
-            pid.clear();
-            pos = pos + 1;
-            if(pos>=ARR_SECTION){
-                break;
-            }
-        }
+        ref = ev3_color_sensor_get_reflect(EV3_PORT_2);
+        feed = (int)pid.update(ref, current_time);
+        ev3_motor_steer(
+        left_motor,
+        right_motor,
+        POWER,
+        feed
+        );
+        /*smoothig motor movement*/
+        tslp_tsk(4 * 1000U); /* 4msec周期起動 */
+        
         
     }
     ev3_motor_stop(left_motor, false);
@@ -179,7 +130,7 @@ void sub_task(intptr_t unused)
 {
     while(1){
     if(current_time != 0.00)
-    syslog(LOG_NOTICE, "%d %d %d ms", (int)current_time, (int)start_time, (int)out_time);
+    syslog(LOG_NOTICE, "%d %d %d", (int)current_time, (int)start_time, (int)delta_time);
     tslp_tsk(100*1000);
     }
 }
@@ -195,7 +146,6 @@ SYSTIM getTime()
     if(start < 0){
         start = time;
     }
-
     now = time - start;
     return now;
 }

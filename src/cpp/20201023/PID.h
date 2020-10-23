@@ -10,11 +10,10 @@
 class PID{
     
     public:
-	PID(double, double);
+	PID(double, double, double, double);
     PID(double, double, double, double, double);
 	double update(double);
     double update(double, double);
-    void parameter(double, double);
     void clear();
     void setSampleTime(double);
 	void setRefMinMax(double, double);
