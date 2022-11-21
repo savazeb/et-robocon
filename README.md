@@ -15,7 +15,7 @@ We're using [TOPPERS/EV3RT](https://dev.toppers.jp/trac_user/ev3pf/wiki/WhatsEV3
 ```
 Go to [./src/cpp](./src/cpp/) to see the implementation of line follower using c++. Or go to [./src/python](./src/python/) to see the implementation in python.
 
-[./template](./template/) is used to create the project base.
+[./templates](./templates/) is used to create the project base.
 
 ## License
 [MIT](./LICENSE)
