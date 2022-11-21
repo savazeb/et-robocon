@@ -7,7 +7,7 @@
  */
 
 #include "ev3api.h" //絶対必要
-#include "app.h"//絶対必要
+#include "app.h"    //絶対必要
 #include <stdio.h>
 #include <stdbool.h>
 #if defined(BUILD_MODULE)
@@ -23,18 +23,17 @@
 #define _debug(x)
 #endif
 
-
 /*configure sensor and motor*/
 static const sensor_port_t
-    color_sensor    = EV3_PORT_2;
+    color_sensor = EV3_PORT_2;
 
 static const motor_port_t
-    left_motor      = EV3_PORT_C,
-    right_motor     = EV3_PORT_B;
-
+    left_motor = EV3_PORT_C,
+    right_motor = EV3_PORT_B;
 
 /*main task*/
-void main_task(intptr_t unused) {
+void main_task(intptr_t unused)
+{
     act_tsk(SUB_TASK);
     tslp_tsk(1000);
 
@@ -48,11 +47,10 @@ void main_task(intptr_t unused) {
     ev3_motor_reset_counts(right_motor);
 
     /*write code here*/
-    while(1)
-    { 
-        
+    while (1)
+    {
     }
-    
+
     ev3_motor_stop(left_motor, false);
     ev3_motor_stop(right_motor, false);
     ext_tsk();
@@ -60,5 +58,4 @@ void main_task(intptr_t unused) {
 
 void sub_task(intptr_t unused)
 {
-    
 }
