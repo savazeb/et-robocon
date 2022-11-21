@@ -1,25 +1,26 @@
 #ifndef PID_H
 #define PID_H
 
-//macro declaration
+// macro declaration
 #define MAX_VAL 100
 #define GUARD 22
 #define LEVEL 20
 
-//class declaration
-class PID{
-    
-    public:
-	PID(double, double);
+// class declaration
+class PID
+{
+
+public:
+    PID(double, double);
     PID(double, double, double, double, double);
-	double update(double);
+    double update(double);
     double update(double, double);
     void parameter(double, double);
     void clear();
     void setSampleTime(double);
-	void setRefMinMax(double, double);
-    
-    private:
+    void setRefMinMax(double, double);
+
+private:
     double Kp;
     double Ki;
     double Kd;

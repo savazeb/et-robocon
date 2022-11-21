@@ -1,12 +1,21 @@
-# <div align="center">[ETロボコン](https://www.etrobo.jp/)
+# ET ROBOCON
+A school project to compete in [ETロボコン](https://www.etrobo.jp/).
 
-<img src="banner.png">
+## Requirements
+We're using [TOPPERS/EV3RT](https://dev.toppers.jp/trac_user/ev3pf/wiki/WhatsEV3RT) kernel as a base to develop Mindstroms EV3 with c++ programing language.
 
-## Competition
-Primary Class
+## Project Tree
+```
+├── src
+│   ├── cpp
+│   │   └── main.cpp
+│   └── python
+│       └── main.py
+└── template
+```
+Go to [./src/cpp](./src/cpp/) to see the implementation of line follower using c++. Or go to [./src/python](./src/python/) to see the implementation in python.
 
-## Goals
-- Finish the line following task within 25-30 seconds using PID controller
-- Complete 2nd task as fast as possible
-- Find the box
-- Park the car
+[./template](./template/) is used to create the project base.
+
+## License
+[MIT](./LICENSE)
